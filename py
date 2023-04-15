@@ -3,6 +3,12 @@ df1 = pd.read_excel('Input_1.xlsx')
 df2 = pd.read_excel('Input_2.xlsx')
 df1.drop(['S No'],axis=1,inplace=True)
 df2.drop(['S No'],axis=1,inplace=True)
+df=df2[['name','uid','total_statements','total_reasons']]
+df.rename(columns={'name':'Name','uid':'UID','total_statements':'No. of Statements','total_reasons':'No. of Reasons'},inplace=True)
+df=pd.DataFrame(df.sort_values(by=['No. of Statements','No. of Reasons','Name'],ascending=False))
+df['Rank']=df[['No. of Statements','No. of Reasons','Name']].apply(tuple,axis=1).rank(method='dense',ascending=False).astype(int)
+df=df[df.columns[[4,0,1,2,3]]]
+df.to_excel('output2.xlsx')
 df3 = pd.merge(df1,df2,left_on='User ID',right_on='uid',how='left')
 df3.drop(['uid','name'],axis=1,inplace=True)
 df4=pd.DataFrame(df3.groupby(['Team Name'])['total_statements','total_reasons'].mean())
@@ -19,4 +25,4 @@ df4=pd.merge(df6, df4, left_index=True, right_index=True)
 df4=df4[df4.columns[[1,0,2,3]]]
 df4=pd.DataFrame(df4)
 df4=pd.DataFrame(df4.sort_values(by=['Rank']))
-df4.to_excel('output.xlsx')
+df4.to_excel('output1.xlsx')
